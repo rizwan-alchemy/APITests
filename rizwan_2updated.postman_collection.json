@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "1baf01a5-6e83-41cf-86a1-690728048074",
+		"name": "wisetail",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "US countryparts",
+			"item": [
+				{
+					"name": "countryparts - get US countryparts list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "13e722a0-0cbb-4583-a1fa-8dc65ffcc439",
+								"exec": [
+									"//Ticket Reference: #198341 [Technical] LookCountryPart Cleanup\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"var expectedCountryParts = 59;\r",
+									"var actualCountryParts = jsonData.length;\r",
+									"var expectedCountryCd = pm.environment.get('americanCountryCode');\r",
+									"var expectedCountryPartCdLength = 2;\r",
+									"\r",
+									"pm.test(\"countrypart - Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All 59 countryparts/states for US are available in system\", function () {\r",
+									"    pm.expect(expectedCountryParts).to.eql(actualCountryParts);\r",
+									"})\r",
+									"pm.test(\"countrypart - 'US' is set as a country for all countryparts\", function () {\r",
+									"    for (i = 0; i < actualCountryParts; i++) {\r",
+									"        pm.expect(expectedCountryCd).to.eql(jsonData[i].countryCd);\r",
+									"    }\r",
+									"})\r",
+									"pm.test(\"countrypart - All state codes have two characters. (ex: OK, OR, NY, LA, PA, CO etc.)\", function () {\r",
+									"    for (i = 0; i < actualCountryParts; i++) {\r",
+									"        pm.expect(expectedCountryPartCdLength).to.eql(jsonData[i].cd.length);\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c872a0e4-62d6-42f2-ba5c-f1a3af573a75",
+								"exec": [
+									"pm.environment.set(\"americanCountryCode\",\"US\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/location/lookcountry/{{americanCountryCode}}/lookcountrypart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"location",
+								"lookcountry",
+								"{{americanCountryCode}}",
+								"lookcountrypart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "countryparts - get countrypart code for US countryparts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "21d79f33-3dd4-462f-a107-2b78d11ca6a3",
+								"exec": [
+									"//Ticket Reference: #198473 [API] - Location mgmt. LookCountryPartCd needed on location list\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"var countryCode = pm.environment.get('americanCountryCode');\r",
+									"var expectedCountryParts = 59;\r",
+									"\r",
+									"pm.test(\"countrypart - Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All US countryparts have 'US' set as Country code\", function () {\r",
+									"    for (let country in jsonData) {\r",
+									"        var countryName = jsonData[country];\r",
+									"        pm.expect(countryName.countryCd).to.include(countryCode);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - 59 countryparts are available in system for US\", function () {\r",
+									"    for (let i = 0; i < jsonData.length; i++) {\r",
+									"        pm.expect(expectedCountryParts).to.eql(jsonData.length);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All US countryparts have countrypart code in them\", function () {\r",
+									"    for (let countryPartCode in jsonData) {\r",
+									"        var countryParts = jsonData[countryPartCode];\r",
+									"        pm.expect(countryParts).to.have.own.property('cd');\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All US countrypart codes have 2 characters in them\", function () {\r",
+									"    for (let i = 0; i < jsonData.length; i++) {\r",
+									"        pm.expect(jsonData[i].cd.length).to.eql(2);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f8216ce1-99a3-43fc-8376-d2d5f0f4fb0c",
+								"exec": [
+									"pm.environment.set(\"americanCountryCode\",\"US\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/location/lookcountry/{{americanCountryCode}}/lookcountrypart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"location",
+								"lookcountry",
+								"{{americanCountryCode}}",
+								"lookcountrypart"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Canadian countryparts",
+			"item": [
+				{
+					"name": "countryparts - get Canadian countryparts list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f1d5068a-b3e1-4157-9c33-c10f4e762af1",
+								"exec": [
+									"//Ticket Reference: #198341 [Technical] LookCountryPart Cleanup\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"var expectedCountryParts = 13;\r",
+									"var actualCountryParts = jsonData.length;\r",
+									"var expectedCountryCd = pm.environment.get('canadianCountryCode');\r",
+									"var actualCountryCd = jsonData.countryCd;\r",
+									"var expectedCountryPartCdLength = 2;\r",
+									"\r",
+									"pm.test(\"countrypart - Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All 13 countryparts/provinces for Canada are available in system\", function () {\r",
+									"    pm.expect(expectedCountryParts).to.eql(actualCountryParts);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All countryparts have country code set to 'CA'\", function () {\r",
+									"    for (i = 0; i < actualCountryParts; i++) {\r",
+									"        pm.expect(expectedCountryCd).to.eql(jsonData[i].countryCd);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All countryparts codes have two characters. (ex: ON, NL, AB, NU, NT etc.)\", function () {\r",
+									"    for (i = 0; i < actualCountryParts; i++) {\r",
+									"        pm.expect(expectedCountryPartCdLength).to.eql(jsonData[i].cd.length);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8966e1ea-6545-4091-ba78-f322a07a6593",
+								"exec": [
+									"pm.environment.set(\"canadianCountryCode\",\"CA\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/location/lookcountry/{{canadianCountryCode}}/lookcountrypart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"location",
+								"lookcountry",
+								"{{canadianCountryCode}}",
+								"lookcountrypart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "countryparts - get countrypart code for Canadian countryparts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "21d79f33-3dd4-462f-a107-2b78d11ca6a3",
+								"exec": [
+									"//Ticket Reference: #198473 [API] - Location mgmt. LookCountryPartCd needed on location list\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"var countryCode = pm.environment.get('canadianCountryCode');\r",
+									"var expectedCountryParts = 13;\r",
+									"\r",
+									"pm.test(\"countrypart - Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All Canadian countryparts have 'CA' set as Country code\", function () {\r",
+									"    for (let country in jsonData) {\r",
+									"        var countryName = jsonData[country];\r",
+									"        pm.expect(countryName.countryCd).to.include(countryCode);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - 13 countryparts are available in system for Canada\", function () {\r",
+									"    for (let i = 0; i < jsonData.length; i++) {\r",
+									"        pm.expect(expectedCountryParts).to.eql(jsonData.length);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All Canadian countryparts have countrypart code in them\", function () {\r",
+									"    for (let countryPartCode in jsonData) {\r",
+									"        var countryParts = jsonData[countryPartCode];\r",
+									"        pm.expect(countryParts).to.have.own.property('cd');\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"countrypart - All Canadian countrypart codes have 2 characters in them\", function () {\r",
+									"    for (let i = 0; i < jsonData.length; i++) {\r",
+									"        pm.expect(jsonData[i].cd.length).to.eql(2);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4619084f-1afb-4f36-a8cf-1b1763716297",
+								"exec": [
+									"pm.environment.set(\"canadianCountryCode\",\"CA\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/location/lookcountry/{{canadianCountryCode}}/lookcountrypart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"location",
+								"lookcountry",
+								"{{canadianCountryCode}}",
+								"lookcountrypart"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "countries - Validate US and Canada are availble in countries",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bde910f9-c9a6-4fa5-a911-686bd33c0430",
+						"exec": [
+							"/******** IGNORE this one .. this was me just getting my feet wet ********/\r",
+							"var jsonData = pm.response.json();\r",
+							"var CA;\r",
+							"var USA;\r",
+							"var caName='Canada';\r",
+							"var usName='United States of America';\r",
+							"\r",
+							"for (let country of jsonData) {\r",
+							"    if (country.name == caName) {\r",
+							"        CA = country;\r",
+							"    }\r",
+							"    if (country.name == usName) {\r",
+							"        USA = country;\r",
+							"    }\r",
+							"}\r",
+							"pm.test(\"Canada is available in countries list\", function () {\r",
+							"    pm.expect(CA.name).to.eql(caName);\r",
+							"});\r",
+							"pm.test(\"USA is available in countries list\", function () {\r",
+							"    pm.expect(USA.name).to.eql(usName);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/location/lookcountry",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"location",
+						"lookcountry"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
